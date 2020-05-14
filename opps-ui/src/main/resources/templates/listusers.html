@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/default}">
+<body>
+
+<div layout:fragment="content">
+
+	<!-- Content Header (Page header) -->
+	<div class="content-header">
+		<div class="container-fluid">
+			<div class="row mb-2">
+				<div class="col-sm-6">
+					<h1 class="m-0 text-dark" th:text="${pagetitle}"></h1>
+				</div><!-- /.col -->
+				<div class="col-sm-6">
+					<ol class="breadcrumb float-sm-right">
+						<li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+						<li class="breadcrumb-item active" th:text="${pagetitle}"></li>
+					</ol>
+				</div><!-- /.col -->
+			</div><!-- /.row -->
+		</div><!-- /.container-fluid -->
+	</div>
+	<!-- /.content-header -->
+	<div class="content">
+
+		<div class="container-fluid">
+
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="card">
+						<div class="card-header border-0">
+							<h3 class="card-title"><b>Admins</b></h3>
+						</div>
+						<div class="card-body table-responsive p-0">
+							<table class="table table-striped table-valign-middle table-hover" id="admins">
+								<thead>
+								<tr>
+									<th>Username</th>
+									<th>Email</th>
+								</tr>
+								</thead>
+								<tbody id="admintable"></tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row" id="otherstats">
+				<div class="col-lg-12">
+					<div class="card">
+						<div class="card-header border-0">
+							<h3 class="card-title"><b>Registered Users</b></h3>
+						</div>
+						<div class="card-body table-responsive p-0">
+							<table class="table table-striped table-valign-middle table-hover" id="users">
+								<thead>
+								<tr>
+									<th>Username</th>
+									<th>Email</th>
+									<th>Admin?</th>
+									<th>Remove</th>
+									<th>Enable/Disable</th>
+								</tr>
+								</thead>
+								<tbody id="usertable"></tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+
+				<!-- /.col-md-6 -->
+			</div>
+			<!-- /.row -->
+		</div>
+		<!-- /.container-fluid -->
+	</div>
+
+
+	<script type="text/javascript">
+		function deleteUser(name, id){
+			if(confirm("Are you sure you want to remove: " + name + " ?")){
+				apiAjaxCall('/user/api/' + id, 'DELETE', null, function (response) {
+					if (response.status == "ok") {
+						fireToast("success", "User was successfully deleted");
+						fillTables();
+					} else {
+						console.log("error: " + response.msg);
+						custom_show_message("Error", response.msg);
+					}
+				});
+			}
+		}
+
+		function enableUser(name, id){
+			if(confirm("Are you sure you want to enable: " + name + " ?")){
+				apiAjaxCall('/user/api/enable', 'PATCH', {id:id}, function (response) {
+					if (response.status == "ok") {
+						fireToast("success", "User was successfully enabled");
+						fillTables();
+					} else {
+						console.log("error: " + response.msg);
+						custom_show_message("Error", response.msg);
+					}
+				});
+			}
+		}
+
+		function disableUser(name, id){
+			if(confirm("Are you sure you want to disable: " + name + " ?")){
+				apiAjaxCall('/user/api/disable', 'PATCH', {id:id}, function (response) {
+					if (response.status == "ok") {
+						fireToast("success", "User was successfully disabled");
+						fillTables();
+					} else {
+						console.log("error: " + response.msg);
+						custom_show_message("Error", response.msg);
+					}
+				});
+			}
+		}
+
+	function addUser(item, index){
+		var table = document.getElementById("users");
+
+		var row = table.insertRow(-1);
+		row.id = item.id;
+
+		var aCell = row.insertCell(-1);
+		aCell.style="text-align:left;";
+		aCell.innerHTML = item.username;
+
+		var aCell = row.insertCell(-1);
+		aCell.style="text-align:left;";
+		aCell.innerHTML = item.email;
+
+		var aCell = row.insertCell(-1);
+		aCell.style="text-align:left;";
+		aCell.innerHTML = item.admin;
+
+        var deleteCell = row.insertCell(-1);
+		var btn = document.createElement("button");
+		btn.type = "submit";
+		btn.style = "color:#ff8080;background-color:#1f1f1f;border-color:#ff8080;height:auto;line-height:inherit;padding:0 7px;text-transform:none;";
+		btn.setAttribute("onclick", "javascript:return deleteUser('"+item.username+"','"+item.id+"');");
+		btn.value = item.id;
+		btn.innerHTML = "Delete";
+		deleteCell.appendChild(btn);
+
+		var toggleEnabledCell = row.insertCell(-1);
+		var btn = document.createElement("button");
+		btn.type = "submit";
+		if(item.enabled){
+			btn.style = "color:#ff8080;background-color:#1f1f1f;border-color:#ff8080;height:auto;line-height:inherit;padding:0 7px;text-transform:none;";
+			btn.setAttribute("onclick", "javascript:return disableUser('"+item.username+"','"+item.id+"');");
+			btn.innerHTML = "Disable";
+		}else{
+			btn.style = "color:rgb(122, 186, 143);background-color:#1f1f1f;border-color:rgb(122, 186, 143);height:auto;line-height:inherit;padding:0 7px;text-transform:none;";
+			btn.setAttribute("onclick", "javascript:return enableUser('"+item.username+"','"+item.id+"');");
+			btn.innerHTML = "Enable";
+		}
+		btn.value = item.id;
+
+		toggleEnabledCell.appendChild(btn);
+	}
+
+	function addAdmin(item, index){
+		var table = document.getElementById("admins");
+
+		var row = table.insertRow(-1);
+
+		var aCell = row.insertCell(-1);
+		aCell.style="text-align:left;color:#ff8080;";
+		aCell.innerHTML = item.username;
+
+		var aCell = row.insertCell(-1);
+		aCell.style="text-align:left;";
+		aCell.innerHTML = item.email;
+	}
+
+	function fillTables(){
+		$("#admins :first-child :not(:first)").children().remove();
+		$("#users :first-child :not(:first)").children().remove();
+		apiAjaxCall('/user/api/users', 'GET', null, function (response) {
+			if (response.status == "ok") {
+				response.users.forEach(addUser);
+				response.admins.forEach(addAdmin);
+			} else {
+				custom_show_message("Error", response.msg);
+			}
+		});
+	}
+
+	fillTables();
+
+	</script>
+
+</div>
+</body>
+</html>

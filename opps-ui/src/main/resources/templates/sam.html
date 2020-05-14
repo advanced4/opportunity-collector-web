@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<body>
+
+<div layout:fragment="content">
+    <!-- daterange picker -->
+    <link rel="stylesheet" href="/plugins/daterangepicker/daterangepicker.css">
+    <!-- InputMask -->
+    <script src="/plugins/moment/moment.min.js"></script>
+    <!-- date-range-picker -->
+    <script src="/plugins/daterangepicker/daterangepicker.js"></script>
+
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark" th:text="${pagetitle}"></h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item active"><a href="/dashboard">Home</a></li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <div class="content">
+
+     <div class="container-fluid">
+
+         <div class="row">
+
+             <div class="col-lg-4" style="margin:0 auto;">
+                 <div class="card" style="height:94%;">
+                     <div class="card-body" style="padding:20px;">
+                         <h3 class="card-title"><b>Date Range</b></h3><br><br>
+                         <div class="form-group" style="height:50%;">
+                             <div class="input-group" style="height:100%;">
+                                 <button style="margin:0 auto;height:100%;width:70%;" type="button" class="btn btn-default pull-right" id="daterange-btn">
+                                    <span>
+                                      <i class="fa fa-calendar"></i> Date range picker
+                                    </span>
+                                     <i class="fa fa-caret-down"></i>
+                                 </button>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+
+             <div class="col-lg-4" style="margin:0 auto;">
+                 <div class="card" style="height:94%;">
+                     <div class="card-body" style="padding:20px;">
+                         <h3 class="card-title"><b>Add NAICS Code</b></h3><br><br>
+                         <div class="form-group">
+                             <input id="newcode" type="number" class="form-control" placeholder="NAICS code ...">
+                             <button style="margin:0 auto;display:block;width:50%;margin-top:20px;" onclick="javascript:return addNaics();">Add <i class="text-success fa fa-plus"></i></button>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+
+             <div class="col-lg-4" style="margin:0 auto;">
+                 <div class="card">
+                     <div class="card-body" style="padding:20px;">
+                         <h3 class="card-title"><b>Types</b></h3><br><br>
+                         <div class="form-group">
+
+                             <th:block th:each="key, iStat : ${types.keySet()}">
+                                 <div class="checkbox" style="display:inline-block;width:49%;padding-left:20px;">
+                                     <label>
+                                         <input type="checkbox" th:value="${key}" th:id="${'type-'+key}">
+                                         <span th:text="${types.get(key)}"></span>
+                                     </label>
+                                 </div>
+                                 <br th:if="${iStat.isEven()}">
+                             </th:block>
+
+                         </div>
+                     </div>
+                 </div>
+             </div>
+
+             <div class="col-lg-10" style="margin:0 auto;">
+                 <div class="card">
+                     <div class="card-body" style="padding:20px;">
+                         <h3 class="card-title"><b>NAICS</b></h3><br><br>
+                         <div class="form-group" id="naicsholder" style="display:flex;">
+                             <div class="col-lg-6" style="padding-left:0;" id="leftnaics">
+                             </div>
+
+                             <div class="col-lg-6" style="padding-left:0;" id="rightnaics">
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+
+         </div>
+         <div class="row">
+             <div class="col-lg-3" style="margin:0 auto;">
+                 <div class="card">
+                     <div class="card-body" style="padding:20px;">
+                         <button type="button" class="btn btn-lg btn-block btn-primary" id="getopps">Get</button>
+                     </div>
+                 </div>
+             </div>
+         </div>
+
+      </div>
+      <!-- /.container-fluid -->
+    </div>
+    <script>
+        //Date range as a button
+        function updateDateRangeLabel(startms=null, endms=null){
+            if(startms != null){
+                $('#daterange-btn').data('daterangepicker').startDate = moment.unix(startms/1000);
+            }
+
+            if(endms != null){
+                $('#daterange-btn').data('daterangepicker').endDate = moment.unix(endms/1000);
+            }
+
+            $('#daterange-btn span').html($('#daterange-btn').data('daterangepicker').startDate.format('MMMM D, YYYY') + ' - ' + $('#daterange-btn').data('daterangepicker').endDate.format('MMMM D, YYYY'))
+        }
+
+        $('#daterange-btn').daterangepicker(
+          {
+            ranges   : {
+              'Yesterday'   : [moment().subtract(1, 'days'), moment()],
+              'Last 7 Days' : [moment().subtract(6, 'days'), moment()],
+              'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+              'Last 60 Days': [moment().subtract(59, 'days'), moment()],
+              'Last 90 Days': [moment().subtract(89, 'days'), moment()],
+              'This Month'  : [moment().startOf('month'), moment().endOf('month')],
+              'Last Month'  : [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            startDate: moment().subtract(29, 'days'),
+            endDate  : moment()
+          },
+          function (start, end) {
+            $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+          }
+        );
+
+    updateDateRangeLabel();
+
+
+    function enableTypes(value, idx, array){
+        document.getElementById("type-" + value).checked = true;
+    }
+
+    // a little weird, but i see two solutions
+    // 1: modify the UI client side when user adds/removes codes. just straight up add & delete elements
+    // then when it comes time to query, search the DOM to see which elements exist (that have an ID beginning with "naics-")
+    // 2: make API calls every time a code is removed or added (i.e. keep state server side). would be a lot of API calls
+    // I think #1 is better for this use case. no latency, no api calls, no server needed, no outside storage needed,
+    // but we're using the DOM to store the state which is kinda weird
+    function getNaicsCodes(){
+        var codes = [];
+        $('[id^="naics-"]').each(function(index){
+            codes.push(parseInt(this.id.replace("naics-","")));
+        });
+
+        // https://stackoverflow.com/questions/9229645/remove-duplicate-values-from-js-array
+        // shouldn't be possible to have duplicates since we check for it on entry,
+        // but it doesn't hurt
+        return [...new Set(codes)];
+    }
+
+    var leftnaics = document.getElementById("leftnaics");
+    var rightnaics = document.getElementById("rightnaics");
+
+    function removeNaics(code){
+        var element = document.getElementById("naics-" + code);
+        element.parentNode.removeChild(element);
+    }
+
+    function addNaics(){
+        var numright = document.getElementById("rightnaics").children.length;
+        var numleft = document.getElementById("leftnaics").children.length;
+        var code = document.getElementById("newcode").value;
+
+
+        // longest code is 6 digits
+        if(code > 999999){
+            fireToast('warning', "Bad NAICS code. Must be <= 6 digits");
+            return;
+        }
+
+        // smallest & shortest code is 11
+        if(code < 11){
+            fireToast('warning', "Bad NAICS code - too small");
+            return;
+        }
+
+        if(document.getElementById("naics-"+code) != null){
+            fireToast('warning', "Already Exists");
+            return;
+        }
+
+        var whichSide = leftnaics;
+        if(numleft > numright){
+            whichSide = rightnaics;
+        }
+
+        var markup = `
+             <div class="card" style="display:inline-block;width:100%;padding-left:10px;" id="naics-${code}">
+                 <label>
+                     <span>${code}</span> -
+                     <span id="ndesc-${code}">N/A</span>
+
+                 </label>
+                 <button style="float:right;padding-right:10px;" onclick="javascript:return removeNaics('${code}');">Remove <i class="text-danger fa fa-trash"></i></button>
+             </div>`;
+
+        // ok we should be all good by this point, so clear the input value
+        document.getElementById("newcode").value = null;
+        // add the element
+        whichSide.insertAdjacentHTML('beforeend', markup);
+        // and look for a description
+        getNaicsDescription(code);
+    }
+
+    function getNaicsDescription(code){
+        apiAjaxCall('/opps/api/naics/' + code, 'GET', null, function (response) {
+            if (response.status == "ok") {
+                document.getElementById("ndesc-"+code).innerHTML = response.msg;
+            } else {
+                // if it fails, oh well. it's already defaulted to "n/a";
+            }
+        });
+    }
+
+    function addNaicsIter(value, idx, array){
+        var description = value.desc;
+        if(description == null){
+            description = "N/A";
+        }
+        var markup = `
+             <div class="card" style="display:inline-block;width:100%;padding-left:10px;" id="naics-${value.code}">
+                 <label>
+                     <span>${value.code}</span> -
+                     <span>${description}</span>
+
+                 </label>
+                 <button style="float:right;padding-right:10px;" onclick="javascript:return removeNaics('${value.code}');">Remove <i class="text-danger fa fa-trash"></i></button>
+             </div>`;
+
+         if(idx%2 == 0){
+            leftnaics.insertAdjacentHTML('beforeend', markup);
+         }else{
+            rightnaics.insertAdjacentHTML('beforeend', markup);
+         }
+    }
+
+    apiAjaxCall('/cfg/api/sam', 'GET', null, function (response) {
+        if (response.status == "ok") {
+            response.samCfg.sam_types.forEach(enableTypes);
+            response.samCfg.sam_naics.forEach(addNaicsIter);
+            if(response.samCfg.last_search_date != 0){
+                updateDateRangeLabel(response.samCfg.last_search_date, Date.now());
+            }
+            console.log(response.samCfg);
+        } else {
+            custom_show_message("Error", response.msg);
+        }
+    });
+
+    $("#getopps").click(function(){
+        enableBlur();
+        var payload = {
+            start:$('#daterange-btn').data('daterangepicker').startDate.valueOf(),
+            end:$('#daterange-btn').data('daterangepicker').endDate.valueOf(),
+            types:[],
+            codes:[]
+        };
+
+        $('[id^="type-"]').each(function(index){
+            if(this.checked){
+                payload.types.push(this.value);
+            }
+        });
+
+        payload.codes = getNaicsCodes();
+
+        // let them know it takes ~2 seconds per request, plus an extra 2 seconds for overhead
+        updateBlurText("This will take about " + (payload.codes.length * payload.types.length * 2)+2 + " seconds. Please do not close this tab until the download completes");
+
+        if(payload.codes.length < 1){
+            disableBlur();
+            custom_show_message("Error", "You must provide at least one NAICS code");
+            return;
+        }
+
+        if(payload.types.length < 1){
+            disableBlur();
+            custom_show_message("Error", "You must select at least one opportunity type");
+            return;
+        }
+
+        console.log(payload);
+
+        async function getData(url = '', params = {}) {
+            var formattedParams = "?start=" + params.start;
+            formattedParams += "&end=" + params.end;
+            formattedParams += "&types=" + encodeURIComponent(JSON.stringify(params.types));
+            formattedParams += "&codes=" + encodeURIComponent(JSON.stringify(params.codes));
+
+          // Default options are marked with *
+          const response = await fetch(url + formattedParams, {
+            method: 'GET', // *GET, POST, PUT, DELETE, etc.
+            mode: 'same-origin', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, *same-origin, omit
+            referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+          });
+          return response; // parses JSON response into native JavaScript objects
+        }
+
+        getData('/opps/api/sam', payload)
+          .then(res => {
+            disableBlur();
+            if(res.status == 200){
+                res.blob().then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+
+                    // the filename you want
+                    a.download = res.headers.get("Content-Disposition").replace("attachment; filename=", "");
+                    document.body.appendChild(a);
+                    a.click();
+
+                    window.URL.revokeObjectURL(url);
+                    fireToast("success", "Download complete!");
+                });
+            }else if(res.status == 204){
+                custom_show_message("Info", "No results.");
+            }else if(res.status == 500){
+                custom_show_message("Error", "A server error occurred");
+            }else{
+                res.json().then(ares => {
+                    custom_show_message("Error", ares.msg);
+                });
+            }
+          })
+          .catch((error) => custom_show_message("Error", "A server error occurred: " + error));
+    });
+
+</script>
+</div>
+</body>
+</html>

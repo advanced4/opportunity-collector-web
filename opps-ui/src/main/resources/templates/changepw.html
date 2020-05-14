@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/default}">
+<body>
+
+<div layout:fragment="content">
+	<script type="text/JavaScript" src="/js/sha512.js"></script>
+	<script type="text/JavaScript" src="/js/forms.js"></script>
+	<script type="text/JavaScript" src="/js/sha1.js"></script> <!-- only used for HIBP check -->
+
+	<!-- Content Header (Page header) -->
+	<div class="content-header">
+		<div class="container-fluid">
+			<div class="row mb-2">
+				<div class="col-sm-6">
+					<h1 class="m-0 text-dark" th:text="${pagetitle}"></h1>
+				</div><!-- /.col -->
+				<div class="col-sm-6">
+					<ol class="breadcrumb float-sm-right">
+						<li class="breadcrumb-item active"><a href="/dashboard">Home</a></li>
+					</ol>
+				</div><!-- /.col -->
+			</div><!-- /.row -->
+		</div><!-- /.container-fluid -->
+	</div>
+	<!-- /.content-header -->
+
+	<div class="content">
+		<div class="container-fluid">
+			<div class="row" id="otherstats">
+				<div class="col-lg-8" style="margin: 0 auto;">
+					<div class="card">
+						<div class="card-header border-0">
+							<h3 class="card-title"><b>Change Password</b></h3>
+						</div>
+						<div class="card-body p-0">
+							<ul style="text-align:left;">
+								<li>Password must be at least 10 characters long</li>
+								<li>Your password and confirmation must match exactly</li>
+							</ul>
+
+							<div style="width:50%;margin:0 auto;padding-bottom:3%;">
+								<form autocomplete="nope" action="" method="post" name="registration_form">
+									<br/>
+									<p><label style="padding-right:10px;width:35%;" for="password">New password:</label>
+									<input style="width:64%;" type="password" required name="password" id="password"/></p>
+
+									<p><label style="padding-right:10px;width:35%;" for="confirmpwd">Confirm new password: </label>
+									<input style="width:64%;" type="password" required minlength="8" maxlength="64" name="confirmpwd" id="confirmpwd"/></p>
+
+									<input style="display:flex; margin:0 auto;" type="button" value="Change" onclick="return changePw(this.form, this.form.password, this.form.confirmpwd, this.form.id);"/>
+								</form>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /.container-fluid -->
+	</div>
+	<script>
+        function changePw(form){
+        if(!changepw(form, form.password, form.confirmpwd)){
+            return false;
+        }
+
+        var payload = {
+            p:form.p.value,
+        };
+
+        apiAjaxCall('/user/api/changepw', 'PATCH', payload, function (response) {
+            if (response.status == "ok") {
+                custom_show_message_redirect("Success", "Password was successfully updated", "/main");
+            } else {
+                console.log("error: " + response.msg);
+                custom_show_message("Error", response.msg);
+            }
+        });
+        return false;
+
+        }
+    </script>
+</div>
+</body>
+</html>
+

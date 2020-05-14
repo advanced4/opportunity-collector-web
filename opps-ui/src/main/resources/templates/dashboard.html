@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<body>
+
+<div layout:fragment="content">
+
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark" th:text="${pagetitle}"></h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item active"><a href="/dashboard">Home</a></li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <div class="content">
+
+     <div class="container-fluid">
+
+
+         <div class="row">
+             <div class="col-lg-8" style="margin:0 auto;">
+                 <div class="card">
+                     <div class="card-header border-0">
+                         <h3 class="card-title"><b>Welcome</b></h3>
+                     </div>
+                     <div class="card-body" style="padding:20px;">
+                         <p>Welcome to the <span th:text="${cname}"></span> Opportunity collector</p>
+                         <p>This tool will help simplify the process of searching & collecting opportunities on sites
+                         like sam.gov and grants.gov.</p>
+
+                         <p>
+                             <b>Features</b><br>
+                             <ul>
+                                <li>Automatically saves configuration settings since they should rarely change</li>
+                                <li>Will fill out date ranges based on last query (i.e. search between last search date & today)</li>
+                                <li>Downloads as a spreadsheet</li>
+                                <li>Will attempt to alert you if an API key is due to expire</li>
+                            </ul>
+                         </p>
+
+                         <p>
+                             <b>Notes</b><br>
+                         <ul>
+                             <li>Some sources require an API key to use</li>
+                             <li>Some sources have API usage limits. For this reason, some queries may take a few seconds-minutes to complete</li>
+                             <li>This tool is designed for a modern browser</li>
+                             <li>This tool looks best on monitors >= 1920x1080 (a regular FHD monitor)</li>
+                         </ul>
+                         </p>
+
+                         <b>Sources</b>
+                         <br>
+                         <div class="row" style="padding-top:10px;">
+                             <div class="col-md-3 col-sm-6 col-9">
+                                 <a href="/grants">
+                                 <div class="info-box bg-success">
+                                     <span class="info-box-icon"><i class="fas fa-server"></i></span>
+                                     <div class="info-box-content">Grants.gov</div>
+                                     <!-- /.info-box-content -->
+                                 </div>
+                                 <!-- /.info-box -->
+                                 </a>
+                             </div>
+
+                             <div class="col-md-3 col-sm-6 col-9">
+                                 <a href="/sam">
+                                 <div class="info-box bg-info">
+                                     <span class="info-box-icon"><i class="fas fa-server"></i></span>
+
+                                     <div class="info-box-content">Sam.gov</div>
+                                     <!-- /.info-box-content -->
+                                 </div>
+                                 <!-- /.info-box -->
+                                 </a>
+                             </div>
+
+                         </div>
+                         <!-- /.row -->
+
+                         <p>
+                             <b>Need help?</b><br>
+                             too bad
+                         </p>
+                     </div>
+                 </div>
+             </div>
+         </div>
+      </div>
+      <!-- /.container-fluid -->
+    </div>
+
+</div>
+</body>
+</html>

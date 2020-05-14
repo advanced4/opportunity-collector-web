@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml" lang="en">
+<head th:replace="fragments/header :: head"></head>
+
+<body class="hold-transition sidebar-mini sidebar-collapse">
+<div class="wrapper">
+
+    <div class="modal fade" id="modal-secondary">
+        <div class="modal-dialog" style="max-width:700px;">
+            <div class="modal-content bg-secondary">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modal-msg-title" style="margin:0 auto;"></h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="padding:0;margin:0;">
+                        <span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <p id="modal-msg-content"></p>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-outline-light" data-dismiss="modal" style="margin: 0 auto;">Ok</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+<script th:inline="javascript">
+    if([[${error != null}]]){
+        custom_show_message_redirect("Error", [[${error}]], "/dashboard", "alert");
+        window.history.replaceState(null, null, window.location.pathname);
+    }
+
+    if([[${errornrd != null}]]){
+        custom_show_message("Error", [[${errornrd}]], "alert");
+    }
+
+    if([[${success != null}]]){
+        custom_show_message("Success", [[${success}]], "info");
+        window.history.replaceState(null, null, window.location.pathname);
+    }
+
+</script>
+
+    <div id="loading" class="loading" style="display:none;">
+        <div class="fullscreen">
+            <div class="spinner-wrapper">
+                <div class="spinner"></div>
+                <div class="spinner-text" id="blurtext">LOADING</div>
+            </div>
+        </div>
+    </div>
+
+<nav th:replace="fragments/topmenu :: nav"></nav>
+<aside th:replace="fragments/sidemenu :: aside"></aside>
+
+
+<div layout:fragment="content" id="maindiv" class="content-wrapper" ></div>
+
+<!-- Control Sidebar -->
+<aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+</aside>
+<!-- /.control-sidebar -->
+
+<div th:replace="fragments/footer :: footer"></div>
+</div>
+
+<!-- AdminLTE -->
+<script src="/js/adminlte.js"></script>
+
+<!-- OPTIONAL SCRIPTS -->
+<script src="/js/demo.js"></script>
+
+</body>
+</html>

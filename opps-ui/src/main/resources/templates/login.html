@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Log in</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="/plugins/fontawesome-free/css/all.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="/css/ionicons.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/css/adminlte.css">
+
+  <!-- jQuery -->
+  <script src="/plugins/jquery/jquery.min.js"></script>
+  <!-- Bootstrap 4 -->
+  <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+</head>
+<body class="hold-transition login-page">
+
+<div class="modal fade" id="modal-secondary">
+  <div class="modal-dialog" style="max-width:700px;">
+    <div class="modal-content bg-secondary">
+      <div class="modal-header">
+        <h4 class="modal-title" id="modal-msg-title" style="margin:0 auto;"></h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="padding:0;margin:0;">
+          <span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <p id="modal-msg-content"></p>
+      </div>
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-outline-light" data-dismiss="modal" style="margin: 0 auto;">Ok</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<script th:inline="javascript">
+  // this function requires jquery
+  function custom_show_message(title, message){
+      document.getElementById("modal-msg-title").innerHTML = title;
+      document.getElementById("modal-msg-content").innerHTML = message;
+
+      $("#modal-secondary").modal('show');
+  }
+
+  if([[${error != null}]]){
+      custom_show_message("Error", [[${error}]], "alert");
+  }
+
+</script>
+
+<div class="login-box" style="margin-top:10%;">
+  <div class="login-logo">
+    <b th:text="${cname}"></b> Opportunities
+  </div>
+  <!-- /.login-logo -->
+  <div class="card">
+    <div class="card-body login-card-body">
+      <form action="/login" method="post" id="loginform">
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" id="email" name="email" placeholder="Email Address">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-envelope"></span>
+            </div>
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <input type="password" class="form-control" id="fpassword" name="fpassword" placeholder="Password">
+          <input type="hidden" class="form-control" id="password" name="password">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <!-- /.col -->
+          <div class="col-4" style="margin: 0 auto;">
+            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+          </div>
+          <!-- /.col -->
+        </div>
+      </form>
+
+    </div>
+    <!-- /.login-card-body -->
+  </div>
+</div>
+<!-- /.login-box -->
+
+<!-- AdminLTE App -->
+<script src="/js/adminlte.min.js"></script>
+<script src="/js/sha512.js"></script>
+
+<script type="text/javascript">
+  $('#loginform').submit(function (event) {
+      var une = document.getElementById("email");
+      var fpwe = document.getElementById("fpassword");
+      var pwe = document.getElementById("password");
+
+      if(!une.value || une.value.length < 2 || une.value.length > 128 || !une.value.includes("@") || !une.value.includes(".")){
+        alert("Bad email format");
+        return false;
+      }
+
+      if(!fpwe.value || fpwe.value.length < 8 || fpwe.value.length > 128){
+        alert("Bad password format");
+        return false;
+      }
+
+      pwe.value = hex_sha512(fpwe.value);
+
+      return true;
+  });
+</script>
+
+</body>
+</html>

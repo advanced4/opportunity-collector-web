@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<body>
+
+<div layout:fragment="content">
+    <script type="text/JavaScript" src="/js/sha512.js"></script>
+    <script type="text/JavaScript" src="/js/forms.js"></script>
+    <script type="text/JavaScript" src="/js/sha1.js"></script> <!-- only used for HIBP check -->
+
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark" th:text="${pagetitle}"></h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item active"><a href="/dashboard">Home</a></li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row" id="otherstats">
+                <div class="col-lg-8" style="margin: 0 auto;">
+                    <div class="card">
+                        <div class="card-header border-0">
+                            <h3 class="card-title"><b>Create User</b></h3>
+                        </div>
+                        <div class="card-body p-0">
+                            <ul style="text-align:left;">
+                                <li>Usernames may contain only digits, upper and lowercase letters and underscores</li>
+                                <li>Emails must have a valid email format</li>
+                                <li>Passwords must be at least 10 characters long</li>
+                                <li>Your password and confirmation must match exactly</li>
+                            </ul>
+
+                            <div style="width:50%;margin:0 auto;padding-bottom:3%;">
+                                <form style="text-align:left;" autocomplete="nope" action="" method="post" name="registration_form">
+                                    <p><label style="padding-right:10px;width:30%;" for="username">Username:</label><input style="width:70%;" required minlength="3" maxlength="64" type='text' name='username' id='username' autocomplete="nope" /></p>
+                                    <p><label style="padding-right:10px;width:30%;" for="email">Email:</label><input style="width:70%;" required type="text" minlength="5" maxlength="128" name="email" id="email" autocomplete="new-user"/></p>
+                                    <p><label style="padding-right:10px;width:30%;" for="password">Password:</label><input style="width:70%;" required minlength="10" maxlength="64" type="password" name="password" id="password" autocomplete="new-password"/></p>
+                                    <p><label style="padding-right:10px;width:30%;" for="confirmpwd">Confirm password:</label><input style="width:70%;" required minlength="10" maxlength="64" type="password" name="confirmpwd" id="confirmpwd" /></p>
+
+                                    <input style="display:flex; margin:0 auto;" type="button" value="Create" onclick="return registerUser(this.form);" />
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.container-fluid -->
+    </div>
+    <script>
+        function registerUser(form){
+            if(!regformhash(form, form.username, form.email, form.password, form.confirmpwd)){
+                return false;
+            }
+
+            var payload = {
+                username:form.username.value,
+                email:form.email.value,
+                p:form.p.value,
+            };
+
+            apiAjaxCall('/user/api/create', 'POST', payload, function (response) {
+                if (response.status == "ok") {
+                    custom_show_message("Success", "User was successfully created");
+                } else {
+                    console.log("error: " + response.msg);
+                    custom_show_message("Error", response.msg);
+                }
+            });
+
+            return false; // we don't actually want to ever "submit" the form. we made an ajax call instead
+        }
+    </script>
+</div>
+</body>
+</html>

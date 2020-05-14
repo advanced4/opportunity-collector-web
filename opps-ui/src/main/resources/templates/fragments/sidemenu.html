@@ -1,0 +1,80 @@
+<!-- Main Sidebar Container -->
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="/dashboard" style="display:block;width:100%;border-bottom:1px solid #4b545c">
+        <img th:alt="${cname + 'Logo'}" src="/img/opp-logo.png" style="padding-left:12px;opacity: .8">
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <!-- Add icons to the links using the .nav-icon class
+                     with font-awesome or any other icon font library -->
+
+                <li class="nav-item has-treeview menu-open">
+                    <a href="/dashboard" class="nav-link">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>Dashboard</p>
+                    </a>
+                </li>
+
+                <span th:if="${isadmin}">
+                    <li class="nav-header">Admin</li>
+                    <li class="nav-item">
+                        <a href="/user/register" class="nav-link">
+                            <i class="nav-icon fas fa-user-plus"></i>
+                            <p>Create user</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/user/list" class="nav-link">
+                            <i class="nav-icon fas fa-users"></i>
+                            <p>List users</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/user/changeotherpw" class="nav-link">
+                            <i class="nav-icon fas fa-user-cog"></i>
+                            <p>Change Other's Password</p>
+                        </a>
+                    </li>
+                </span>
+
+                <span>
+                <li class="nav-header">Tools</li>
+                <li class="nav-item">
+                    <a href="/sam" class="nav-link">
+                        <i class="nav-icon fas fa-landmark"></i>
+                        <p>Sam.gov</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="/grants" class="nav-link">
+                        <i class="nav-icon fas fa-dollar-sign"></i>
+                        <p>Grants.gov</p>
+                    </a>
+                </li>
+
+                <li class="nav-header">User</li>
+                <li class="nav-item">
+                    <a href="/user/changepw" class="nav-link">
+                        <i class="nav-icon fas fa-key"></i>
+                        <p>Change Password</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/logout" class="nav-link">
+                        <i class="nav-icon fas fa-sign-out-alt"></i>
+                        <p>Logout</p>
+                    </a>
+                </li>
+                </span>
+            </ul>
+        </nav>
+        <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+</aside>

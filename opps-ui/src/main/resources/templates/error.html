@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<body>
+
+<div layout:fragment="content">
+
+  <!-- Main content -->
+  <section class="content" style="padding-top:20px;">
+    <div class="error-page">
+      <h2 th:class="${'headline text-' + color}" th:text="${errorcode}"></h2>
+
+      <div class="error-content">
+        <h3><i th:class="${'fas fa-exclamation-triangle text-' + color}"></i>Oops! <span th:text="${msgshort}"></span></h3>
+
+        <p>
+          <span th:text="${msglong}"></span>
+          Meanwhile, you may <a href="/dashboard">return to dashboard</a>
+        </p>
+      </div>
+      <!-- /.error-content -->
+    </div>
+    <!-- /.error-page -->
+  </section>
+    </div>
+    <!-- /.content -->
+
+</body>
+</html>

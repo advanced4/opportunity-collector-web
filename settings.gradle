@@ -1,0 +1,3 @@
+rootProject.name = 'opportunity-collector-web'
+include 'common'
+include 'opps-ui'

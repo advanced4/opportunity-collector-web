@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default}">
+<body>
+
+<div layout:fragment="content">
+
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark" th:text="${pagetitle}"></h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item active"><a href="/dashboard">Home</a></li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    <div class="content">
+
+     <div class="container-fluid">
+
+         <div class="row">
+             <div class="col-lg-3" style="margin:0 auto;">
+
+                 <div class="card" style="height:94%;">
+                     <div class="card-body" style="padding:20px;">
+                         <h3 class="card-title"><b>Previous Days Worth</b></h3><br><br>
+                         <div class="form-group">
+                             <label for="pd" class="col-sm-2 control-label"># Days</label>
+
+                             <div class="col-sm-10">
+                                 <input type="number" min="0" max="365" class="form-control" id="pd" placeholder="30" value="30">
+                             </div>
+
+                         </div>
+                     </div>
+                 </div>
+             </div>
+
+             <div class="col-lg-3" style="margin:0 auto;">
+                 <div class="card">
+                     <div class="card-body" style="padding:20px;">
+                         <h3 class="card-title"><b>Instruments</b></h3><br><br>
+                         <div class="form-group">
+
+                             <th:block th:each="key, iStat : ${insts.keySet()}">
+                                 <div class="checkbox" style="padding-left:20px;">
+                                     <label>
+                                         <input type="checkbox" th:value="${key}" th:id="${'inst-'+key}">
+                                         <span th:text="${insts.get(key)}"></span>
+                                     </label>
+                                 </div>
+                             </th:block>
+
+                         </div>
+                     </div>
+                 </div>
+             </div>
+
+             <div class="col-lg-6" style="margin:0 auto;">
+                 <div class="card">
+                     <div class="card-body" style="padding:20px;">
+                         <h3 class="card-title"><b>Eligibilities</b></h3><br><br>
+                         <div class="form-group">
+
+                             <th:block th:each="key, iStat : ${eligs.keySet()}">
+                                 <div class="checkbox" style="display:inline-block;width:49%;padding-left:20px;">
+                                     <label>
+                                         <input type="checkbox" th:value="${key}" th:id="${'elig-'+key}">
+                                         <span th:text="${eligs.get(key)}"></span>
+                                     </label>
+                                 </div>
+                                 <br th:if="${iStat.isEven()}">
+                             </th:block>
+
+                         </div>
+                     </div>
+                 </div>
+             </div>
+
+             <div class="col-lg-12" style="margin:0 auto;">
+                 <div class="card">
+                     <div class="card-body" style="padding:20px;">
+                         <h3 class="card-title"><b>Categories</b></h3><br><br>
+                         <div class="form-group">
+
+                             <th:block th:each="key, iStat : ${cats.keySet()}">
+                                 <div class="checkbox" style="display:inline-block;width:24%;padding-left:20px;">
+                                     <label>
+                                         <input type="checkbox" th:value="${key}" th:id="${'cat-'+key}">
+                                         <span th:text="${cats.get(key)}"></span>
+                                     </label>
+                                 </div>
+                                 <br th:if="${iStat.count%4 == 0}">
+                             </th:block>
+
+                         </div>
+                     </div>
+                 </div>
+             </div>
+
+
+             <div class="col-lg-3" style="margin:0 auto;">
+                 <div class="card">
+                     <div class="card-body" style="padding:20px;">
+                         <button type="button" class="btn btn-lg btn-block btn-primary" id="getopps">Get</button>
+                     </div>
+                 </div>
+             </div>
+
+         </div>
+
+      </div>
+      <!-- /.container-fluid -->
+    </div>
+    <script>
+    function enableCats(value, idx, array){
+        document.getElementById("cat-" + value).checked = true;
+    }
+
+    function enableInst(value, idx, array){
+        document.getElementById("inst-" + value).checked = true;
+    }
+
+    function enableElig(value, idx, array){
+        document.getElementById("elig-" + value).checked = true;
+    }
+
+    apiAjaxCall('/cfg/api/grants', 'GET', null, function (response) {
+        if (response.status == "ok") {
+            response.grantsCfg.cats.forEach(enableCats);
+            response.grantsCfg.eligibilities.forEach(enableElig);
+            response.grantsCfg.instruments.forEach(enableInst);
+            if(response.grantsCfg.last_search_date != 0){
+                var pd = new Date(response.grantsCfg.last_search_date);
+                var td = new Date();
+                const diffTime = Math.abs(td - pd);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                document.getElementById("pd").value = diffDays;
+            }
+        } else {
+            custom_show_message("Error", response.msg);
+        }
+    });
+
+    $("#getopps").click(function(){
+        enableBlur();
+        var payload = {
+            pd:document.getElementById("pd").value,
+            inst:[],
+            cat:[],
+            elig:[]
+        };
+
+        $('[id^="cat-"]').each(function(index){
+            if(this.checked){
+                payload.cat.push(this.value);
+            }
+        });
+
+        $('[id^="inst-"]').each(function(index){
+            if(this.checked){
+                payload.inst.push(this.value);
+            }
+        });
+
+        $('[id^="elig-"]').each(function(index){
+            if(this.checked){
+                payload.elig.push(this.value);
+            }
+        });
+
+        async function getData(url = '', params = {}) {
+            var formattedParams = "?pd=" + params.pd;
+            formattedParams += "&cat=" + encodeURIComponent(JSON.stringify(params.cat));
+            formattedParams += "&inst=" + encodeURIComponent(JSON.stringify(params.inst));
+            formattedParams += "&elig=" + encodeURIComponent(JSON.stringify(params.elig));
+
+          // Default options are marked with *
+          const response = await fetch(url + formattedParams, {
+            method: 'GET', // *GET, POST, PUT, DELETE, etc.
+            mode: 'same-origin', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, *same-origin, omit
+            referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+          });
+          return response; // parses JSON response into native JavaScript objects
+        }
+
+        getData('/opps/api/grants', payload)
+          .then(res => {
+            disableBlur();
+            if(res.status == 200){
+                res.blob().then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+
+                    // the filename you want
+                    a.download = res.headers.get("Content-Disposition").replace("attachment; filename=", "");
+                    document.body.appendChild(a);
+                    a.click();
+
+                    window.URL.revokeObjectURL(url);
+                    fireToast("success", "Download complete!");
+                });
+            }else if(res.status == 500){
+                custom_show_message("Error", "A server error occurred");
+            }else{
+                res.json().then(ares => {
+                    custom_show_message("Error", ares.msg);
+                });
+            }
+          })
+          .catch((error) => custom_show_message("Error", "A server error occurred: " + error));
+    });
+
+</script>
+</div>
+</body>
+</html>

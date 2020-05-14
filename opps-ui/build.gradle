@@ -1,0 +1,65 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.2.4.RELEASE'
+    id 'application'
+}
+
+group 'org.jf'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '2.2.5.RELEASE'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.2.5.RELEASE'
+
+    // https://mvnrepository.com/artifact/org.springframework/spring-web
+    compile group: 'org.springframework', name: 'spring-web', version: '5.2.5.RELEASE'
+
+    compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+    compile 'io.springfox:springfox-swagger-ui:2.9.2'
+
+    // https://mvnrepository.com/artifact/nz.net.ultraq.thymeleaf/thymeleaf-layout-dialect
+    compile group: 'nz.net.ultraq.thymeleaf', name: 'thymeleaf-layout-dialect', version: '2.4.1'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '2.2.5.RELEASE'
+
+    // admin ui stuff
+    // https://mvnrepository.com/artifact/de.codecentric/spring-boot-admin-starter-client
+    compile group: 'de.codecentric', name: 'spring-boot-admin-starter-client', version: '2.2.2'
+
+    dependencies {
+        compile 'io.jsonwebtoken:jjwt-api:0.10.7'
+        runtime 'io.jsonwebtoken:jjwt-impl:0.10.7',
+                // Uncomment the next line if you want to use RSASSA-PSS (PS256, PS384, PS512) algorithms:
+                //'org.bouncycastle:bcprov-jdk15on:1.60',
+                'io.jsonwebtoken:jjwt-jackson:0.10.7'
+    }
+
+    // config validation
+    // https://mvnrepository.com/artifact/org.hibernate.validator/hibernate-validator
+    compile group: 'org.hibernate.validator', name: 'hibernate-validator', version: '6.1.2.Final'
+
+    // https://mvnrepository.com/artifact/com.google.guava/guava
+    // only for rate limiting
+    compile group: 'com.google.guava', name: 'guava', version: '28.2-jre'
+
+    // https://mvnrepository.com/artifact/com.zaxxer/HikariCP
+    compile group: 'com.zaxxer', name: 'HikariCP', version: '3.4.2'
+
+    // https://mvnrepository.com/artifact/org.springframework/spring-web
+    compile group: 'org.springframework', name: 'spring-jdbc', version: '5.2.5.RELEASE'
+
+    // https://mvnrepository.com/artifact/mysql/mysql-connector-java
+    compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.19'
+
+    // only for converting json --> csv
+    // https://mvnrepository.com/artifact/org.json/json
+    compile group: 'org.json', name: 'json', version: '20190722'
+
+    implementation project(':common')
+}
