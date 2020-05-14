@@ -1,6 +1,5 @@
-# Opportunity collector</p>
-This tool will help simplify the process of searching & collecting opportunities on sites
- like sam.gov and grants.gov.
+# Opportunity collector
+This tool will help simplify the process of searching & collecting opportunities on various sites
 
 ## Features
 * Automatically saves configuration settings since they should rarely change
